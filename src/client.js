@@ -13,7 +13,7 @@ export function getPayload(params) {
             }
         };
     }
-    ['bidders', 'gdpr', 'gdpr_consent'].forEach(param => {
+    ['bidders', 'gdpr', 'gdpr_consent', 'gpp_sid', 'gpp'].forEach(param => {
         if (params[param] != null) {
             payload[param] = params[param];
         }

@@ -21,7 +21,9 @@ export function parseParams(params = new URLSearchParams(window.location.search)
         isAmp: params.get('source')?.toLowerCase() === 'amp',
         coopSync: ((sync) => !sync || sync === 'true' || !!parseInt(sync))(params.get('coop_sync')),
         gdpr: ((gdpr) => [0, 1].includes(gdpr) ? gdpr : null)(toInt(params.get('gdpr'))),
-        gdpr_consent: params.get('gdpr_consent'),
+        gdpr_consent: params.get('gdpr_consent') || null,
+        gpp_sid: params.get('gpp_sid') || null,
+        gpp: params.get('gpp') || null,
     }
 }
 

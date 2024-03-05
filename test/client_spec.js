@@ -69,6 +69,20 @@ describe('cookie_sync client', () => {
             'does not add gdpr and gdpr_consent, if missing': {
                 params: {},
                 no: ['gdpr', 'gdpr_consent']
+            },
+            'adds gpp_sid and gpp, if present': {
+                params: {
+                    gpp_sid: '1,2',
+                    gpp: 'consent-string'
+                },
+                payload: {
+                    gpp_sid: '1,2',
+                    gpp: 'consent-string'
+                }
+            },
+            'does not add gpp params, if missing': {
+                params: {},
+                no: ['gpp_sid', 'gpp']
             }
         }).forEach(([t, {params, payload, no}]) => {
             it(t, () => {

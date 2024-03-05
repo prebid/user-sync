@@ -6,6 +6,25 @@ describe('Query parameters', () => {
         return Object.entries(params).map(([k, v]) => `${k}=${v}`).join('&')
     }
 
+    function simpleStringParam(param) {
+        return {
+            param,
+            cases: {
+                undefined: {
+                    to: null
+                },
+                empty: {
+                    from: '',
+                    to: null
+                },
+                string: {
+                    from: 'str',
+                    to: 'str'
+                }
+            }
+        }
+    }
+
     Object.entries({
         'endpoint': {
             param: 'endpoint',
@@ -138,18 +157,9 @@ describe('Query parameters', () => {
                 }
             }
         },
-        gdpr_consent: {
-            param: 'gdpr_consent',
-            cases: {
-                'undefined': {
-                    to: null
-                },
-                'string': {
-                    from: 'consent-string',
-                    to: 'consent-string'
-                }
-            }
-        }
+        gdpr_consent: simpleStringParam('gdpr_consent'),
+        gpp_sid: simpleStringParam('gpp_sid'),
+        gpp: simpleStringParam('gpp'),
     }).forEach(([outParam, {param, cases}]) => {
         describe(`"${outParam}"`, () => {
             Object.entries(cases).forEach(([t, {from, to}]) => {
