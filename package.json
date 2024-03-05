@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "My webpack project",
   "scripts": {
-    "dev": "WEBPACK_ENV=dev concurrently --kill-others webpack-dev-server \"webpack --watch\" \"karma start\"",
+    "dev": "WEBPACK_ENV=dev concurrently --kill-others \"webpack-dev-server --hot\" \"webpack --watch\" \"karma start\"",
+    "test": "karma start --single-run",
     "build": "webpack --mode=production --node-env=production",
     "build:dev": "webpack --mode=development",
     "build:prod": "webpack --mode=production --node-env=production",

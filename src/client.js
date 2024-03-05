@@ -1,4 +1,6 @@
 import {triggerIframe, triggerPixel} from './dom.js';
+import {parseParams} from './params.js';
+import {getLogger} from './log.js';
 
 export function getPayload(params) {
     const payload = Object.assign({}, params.args, {
@@ -62,4 +64,10 @@ export function runAllSyncs(syncs, log = () => {}, runSingleSync = runSync) {
     return syncs.filter(s => s.no_cookie)
         .reduce((pm, sync) => pm.then(() => runSingleSync(sync.bidder, sync.usersync, log)), Promise.resolve())
         .then(() => log('User syncing complete'));
+}
+
+export function loadSyncs(params = parseParams()) {
+    const log = getLogger(params.debug);
+    log('Fetching user syncs', params);
+    return getUserSyncs(params).then(syncs => runAllSyncs(syncs, log));
 }
