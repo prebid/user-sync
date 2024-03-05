@@ -25,6 +25,29 @@ describe('Query parameters', () => {
         }
     }
 
+    function booleanIntParam(param) {
+        return {
+            param,
+            cases: {
+                '1': {
+                    from: '1',
+                    to: 1
+                },
+                '0': {
+                    from: '0',
+                    to: 0
+                },
+                'undefined': {
+                    to: null
+                },
+                'garbage': {
+                    from: 'other',
+                    to: null
+                }
+            }
+        }
+    }
+
     Object.entries({
         'endpoint': {
             param: 'endpoint',
@@ -137,29 +160,28 @@ describe('Query parameters', () => {
                 }
             }
         },
-        gdpr: {
-            param: 'gdpr',
-            cases: {
-                '1': {
-                    from: '1',
-                    to: 1
-                },
-                '0': {
-                    from: '0',
-                    to: 0
-                },
-                'undefined': {
-                    to: null
-                },
-                'garbage': {
-                    from: 'other',
-                    to: null
-                }
-            }
-        },
+        gdpr: booleanIntParam('gdpr', null),
+        defaultGdprScope: booleanIntParam('defaultGdprScope', 1),
         gdpr_consent: simpleStringParam('gdpr_consent'),
         gpp_sid: simpleStringParam('gpp_sid'),
         gpp: simpleStringParam('gpp'),
+        timeout: {
+            param: 'timeout',
+            cases: {
+                default: {
+                    to: null
+                },
+                garbage: {
+                    from: 'garbage',
+                    to: null,
+                },
+                number: {
+                    from: 123,
+                    to: 123
+                }
+            }
+        },
+
     }).forEach(([outParam, {param, cases}]) => {
         describe(`"${outParam}"`, () => {
             Object.entries(cases).forEach(([t, {from, to}]) => {

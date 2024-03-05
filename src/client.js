@@ -1,6 +1,9 @@
 import {isValidURL, triggerIframe, triggerPixel} from './utils.js';
-import {parseParams} from './params.js';
+import {parseParams, resolveParams} from './params.js';
 import {getLogger} from './log.js';
+
+const DEFAULT_TIMEOUT = 500;
+const DEFAULT_TIMEOUT_AMP = 10000;
 
 export function getPayload(params) {
     const payload = Object.assign({}, params.args, {
@@ -70,8 +73,13 @@ export function runAllSyncs(syncs, log = () => {}, runSingleSync = runSync) {
         .then(() => log('User syncing complete'));
 }
 
-export function loadSyncs(params = parseParams()) {
+export function loadSyncs(alwaysPollAMP = false, params = parseParams()) {
     const log = getLogger(params.debug);
-    log('Fetching user syncs', params);
-    return getUserSyncs(params).then(syncs => runAllSyncs(syncs, log));
+    return resolveParams(Object.assign(params, {
+        timeout: params.timeout || (alwaysPollAMP ? DEFAULT_TIMEOUT_AMP : DEFAULT_TIMEOUT)
+    }), alwaysPollAMP)
+        .then(params => {
+            log('Fetching user syncs', params);
+            return getUserSyncs(params);
+        }).then(syncs => runAllSyncs(syncs, log));
 }

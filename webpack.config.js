@@ -5,10 +5,23 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const isProduction = process.env.NODE_ENV == 'production';
 
+function htmlFile(name) {
+    return new HtmlWebpackPlugin({
+        template: 'pug-loader!load-cookie.pug',
+        filename: path.join(path.resolve(__dirname, 'dist'), `${name}.html`),
+        inject: false,
+        templateParameters: (compilation) => {
+            return {
+                source: compilation.getAsset(`${name}.js`).source.source()
+            }
+        }
+    })
+}
 
 const config = {
     entry: {
-        'load-cookie': './src/loadCookie.js'
+        'load-cookie': './src/loadCookie.js',
+        'load-cookie-with-consent': './src/loadCookieWithConsent.js',
     },
     output: {
         path: path.resolve(__dirname, 'build'),
@@ -18,11 +31,8 @@ const config = {
         static: 'dist'
     },
     plugins: [
-        new HtmlWebpackPlugin({
-            template: 'pug-loader!index.pug',
-            filename: path.join(path.resolve(__dirname, 'dist'), '[name].html'),
-            inject: false
-        }),
+        htmlFile('load-cookie'),
+        htmlFile('load-cookie-with-consent'),
     ],
     resolve: {
         modules: [
