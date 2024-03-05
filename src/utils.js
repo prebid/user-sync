@@ -1,8 +1,8 @@
 export function triggerPixel(url) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         const img = new Image();
         img.addEventListener('load', resolve);
-        img.addEventListener('error', reject);
+        img.addEventListener('error', resolve);
         img.src = url;
     })
 }
@@ -28,4 +28,13 @@ export function triggerIframe(url) {
         frame.onload = resolve;
         document.body.appendChild(frame);
     })
+}
+
+export function isValidURL(url) {
+    try {
+        new URL(url);
+        return true;
+    } catch (e) {
+        return false;
+    }
 }

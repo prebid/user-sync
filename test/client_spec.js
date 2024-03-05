@@ -188,6 +188,11 @@ describe('cookie_sync client', () => {
         });
         it('does not choke if trigger does not exist', () => {
             return runSync('bidder', {type: 'other'});
+        });
+        it('does not run invalid URLs', () => {
+            return runSync('bidder', {url: 'invalid', type: 'method'}, () => {}, triggers).then(() => {
+                sinon.assert.notCalled(triggers.method);
+            })
         })
         describe('runs trigger and returns when it', () => {
             Object.entries({
@@ -196,8 +201,8 @@ describe('cookie_sync client', () => {
             }).forEach(([t, result]) => {
                 it(t, () => {
                     triggers.method.returns(result);
-                    return runSync('bidder', {type: 'method', url: 'mock-url'}, () => {}, triggers).then(() => {
-                        sinon.assert.calledWith(triggers.method, 'mock-url');
+                    return runSync('bidder', {type: 'method', url: 'https://www.example.com'}, () => {}, triggers).then(() => {
+                        sinon.assert.calledWith(triggers.method, 'https://www.example.com');
                     });
                 });
             });

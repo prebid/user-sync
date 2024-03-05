@@ -1,4 +1,4 @@
-import {triggerIframe, triggerPixel} from './dom.js';
+import {isValidURL, triggerIframe, triggerPixel} from './utils.js';
 import {parseParams} from './params.js';
 import {getLogger} from './log.js';
 
@@ -49,11 +49,15 @@ export function runSync(bidder, {type, url}, log = () => {}, triggers = {
     redirect: triggerPixel,
     iframe: triggerIframe
 }) {
+    if (!isValidURL(url)) {
+        log(`Invalid URL for '${bidder}: '${url}'`);
+        return Promise.resolve();
+    }
     if (triggers[type] == null) {
         log(`Unsupported sync type for '${bidder}': '${type}'`);
         return Promise.resolve();
     } else {
-        log(`Running ${type} sync for '${bidder}'`);
+        log(`Running ${type} sync for '${bidder}': ${url}`);
         return triggers[type](url).catch(e => {
             log(`Could not run sync for '${bidder}'`, e);
         });

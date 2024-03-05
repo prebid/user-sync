@@ -1,4 +1,5 @@
 import {getLogger} from './log.js';
+import {isValidURL} from './utils.js';
 
 export const ENDPOINT_RUBICON = 'https://prebid-server.rubiconproject.com/cookie_sync';
 export const ENDPOINT_APPNEXUS = 'https://prebid.adnxs.com/pbs/v1/cookie_sync';
@@ -31,10 +32,8 @@ export function parseParams(params = new URLSearchParams(window.location.search)
 function getEndpoint(endpoint, log) {
     endpoint = endpoint || 'appnexus'; // default is appnexus for backwards compat
     if (DEFAULT_ENDPOINTS.hasOwnProperty(endpoint)) endpoint = DEFAULT_ENDPOINTS[endpoint];
-    try {
-        new URL(endpoint);
-    } catch (e) {
-        log(`Invalid enpdoint: ${endpoint}. Defaulting to appnexus.`)
+    if (!isValidURL(endpoint)) {
+        log(`Invalid endpoint: ${endpoint}. Defaulting to appnexus.`)
         endpoint = ENDPOINT_APPNEXUS;
     }
     return endpoint;
