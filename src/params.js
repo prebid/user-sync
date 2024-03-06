@@ -1,4 +1,3 @@
-import {getLogger} from './log.js';
 import {isValidURL} from './utils.js';
 import {getAMPConsent} from './ampConsent.js';
 
@@ -13,11 +12,9 @@ const DEFAULT_ENDPOINTS = {
 };
 
 export function parseParams(params = new URLSearchParams(window.location.search)) {
-    const debug = !!params.get('debug');
-    const log = getLogger(debug);
+    const log = !!params.get('debug')  ? console.log.bind(console) : () => {};
     return {
         log,
-        debug,
         endpoint: getEndpoint(params.get('endpoint'), log),
         args: parseArgs(params.get('args')),
         bidders: ((bidders) => bidders.length ? bidders : null)(splitCommas(params.get('bidders'))),

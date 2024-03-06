@@ -1,6 +1,5 @@
 import {isValidURL, triggerIframe, triggerPixel} from './utils.js';
 import {parseParams, resolveParams} from './params.js';
-import {getLogger} from './log.js';
 
 const DEFAULT_TIMEOUT = 500;
 const DEFAULT_TIMEOUT_AMP = 10000;
@@ -74,12 +73,11 @@ export function runAllSyncs(syncs, log = () => {}, runSingleSync = runSync) {
 }
 
 export function loadSyncs(alwaysPollAMP = false, params = parseParams()) {
-    const log = getLogger(params.debug);
     return resolveParams(Object.assign(params, {
         timeout: params.timeout || (alwaysPollAMP ? DEFAULT_TIMEOUT_AMP : DEFAULT_TIMEOUT)
     }), alwaysPollAMP)
         .then(params => {
-            log('Fetching user syncs', params);
+            params.log?.('Fetching user syncs', params);
             return getUserSyncs(params);
-        }).then(syncs => runAllSyncs(syncs, log));
+        }).then(syncs => runAllSyncs(syncs, params.log));
 }
