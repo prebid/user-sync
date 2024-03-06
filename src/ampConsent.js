@@ -11,7 +11,14 @@ export function getAMPConsent(timeout = 10000, win = window) {
                 msg?.sentinel === 'amp' &&
                 msg?.type === 'consent-data'
             ) {
-                resolve(msg.consentMetadata.gdprApplies ? {gdpr: 1, gdpr_consent: msg.consentString} : {gpdr: 0});
+                if (msg.consentMetadata) {
+                    resolve({
+                        gdpr: msg.consentMetadata.gdprApplies ? 1 : 0,
+                        gdpr_consent: msg.consentString || null
+                    })
+                } else {
+                    resolve();
+                }
                 clearTimeout(timeoutHandle);
                 win.removeEventListener('message', messageHandler);
             }

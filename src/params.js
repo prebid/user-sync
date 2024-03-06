@@ -16,6 +16,7 @@ export function parseParams(params = new URLSearchParams(window.location.search)
     const debug = !!params.get('debug');
     const log = getLogger(debug);
     return {
+        log,
         debug,
         endpoint: getEndpoint(params.get('endpoint'), log),
         args: parseArgs(params.get('args')),
@@ -68,14 +69,19 @@ function splitCommas(value) {
     return (value || '').split(',').filter(el => el);
 }
 
-function resolveConsentParams(params, required, getConsent = getAMPConsent) {
-    const log = getLogger(params.debug);
-    log('Retrieving consent info from AMP...');
+export function resolveConsentParams(params, required, getConsent = getAMPConsent) {
+    params.log?.('Retrieving consent info from AMP...');
     return getConsent(params.timeout)
-        .then(consent => Object.assign(params, consent))
+        .then(consent => {
+            if (consent != null || !required) {
+                return Object.assign(params, consent || {})
+            } else {
+                throw new Error(`Consent information not available`)
+            }
+        })
         .catch(e => {
             const err = 'Error retrieving consent from AMP';
-            log(err, e);
+            params.log?.(err, e);
             if (!(params.defaultGdprScope ?? required)) {
                 return params;
             } else {
@@ -85,7 +91,7 @@ function resolveConsentParams(params, required, getConsent = getAMPConsent) {
 }
 
 export function resolveParams(params, alwaysPollAMP = false, resolveConsent = resolveConsentParams) {
-    if (alwaysPollAMP || params.isAmp && params.gdpr == null) {
+    if (alwaysPollAMP || (params.isAmp && params.gdpr == null)) {
         return resolveConsent(params, alwaysPollAMP);
     } else {
         return Promise.resolve(params);

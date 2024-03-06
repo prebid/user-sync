@@ -1,4 +1,4 @@
-import {ENDPOINT_APPNEXUS, ENDPOINT_RUBICON, NO_LIMIT, parseParams} from '../src/params.js';
+import {ENDPOINT_APPNEXUS, ENDPOINT_RUBICON, NO_LIMIT, parseParams, resolveConsentParams} from '../src/params.js';
 import { expect } from 'chai';
 
 describe('Query parameters', () => {
@@ -188,6 +188,29 @@ describe('Query parameters', () => {
                 it(t, () => {
                     const actual = parseParams(new URLSearchParams(from != null && makeQueryString({[param]: from})))[outParam];
                     expect(actual).to.eql(to);
+                })
+            })
+        })
+    });
+
+    describe('resolveConsentParams', () => {
+        let getConsent;
+        beforeEach(() => {
+            getConsent = sinon.stub();
+        });
+        Object.entries({
+            'cannot be retrieved': Promise.reject(),
+            'is not available': Promise.resolve()
+        }).forEach(([t, consent]) => {
+            describe(`when consent data ${t}`, () => {
+                beforeEach(() => {
+                    getConsent.returns(consent);
+                });
+                it('rejects if required = true', () => {
+                    let resolved = false;
+                    return resolveConsentParams({}, true, getConsent)
+                        .then(() => { resolved = true; throw new Error(); })
+                        .catch(() => expect(resolved).to.eql(false))
                 })
             })
         })

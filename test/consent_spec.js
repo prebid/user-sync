@@ -43,7 +43,25 @@ describe('getAMPConsent', () => {
                 gdpr_consent: 'mock-consent',
             })
         })
-    })
+    });
+
+    it('returns null if AMP replies with no consent', () => {
+        const pm = getAMPConsent(10, win);
+        handler(Object.assign(consentResponse(), {
+            data: {
+                'sentinel': 'amp',
+                'type': 'consent-data',
+                'consentMetadata': null,
+                'consentString': null,
+                'consentPolicyState': null,
+                'consentPolicySharedData': null
+            }
+        }));
+        return pm.then(consent => {
+            expect(consent).to.not.exist;
+        })
+    });
+
     describe('times out on', () => {
         let clock;
         beforeEach(() => {
