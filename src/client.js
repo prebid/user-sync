@@ -1,9 +1,6 @@
 import {isValidURL, triggerIframe, triggerPixel} from './utils.js';
 import {parseParams, resolveParams} from './params.js';
 
-const DEFAULT_TIMEOUT = 500;
-const DEFAULT_TIMEOUT_AMP = 10000;
-
 export function getPayload(params) {
     const payload = Object.assign({}, params.args, {
         coopSync: params.coopSync,
@@ -73,9 +70,7 @@ export function runAllSyncs(syncs, log = () => {}, runSingleSync = runSync) {
 }
 
 export function loadSyncs(alwaysPollAMP = false, params = parseParams()) {
-    return resolveParams(Object.assign(params, {
-        timeout: params.timeout || (alwaysPollAMP ? DEFAULT_TIMEOUT_AMP : DEFAULT_TIMEOUT)
-    }), alwaysPollAMP)
+    return resolveParams(params, alwaysPollAMP)
         .then(params => {
             params.log?.('Fetching user syncs', params);
             return getUserSyncs(params);

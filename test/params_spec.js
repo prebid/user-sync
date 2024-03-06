@@ -1,4 +1,12 @@
-import {ENDPOINT_APPNEXUS, ENDPOINT_RUBICON, NO_LIMIT, parseParams, resolveConsentParams} from '../src/params.js';
+import {
+    DEFAULT_LIMIT,
+    DEFAULT_TIMEOUT,
+    ENDPOINT_APPNEXUS,
+    ENDPOINT_RUBICON,
+    NO_LIMIT,
+    parseParams,
+    resolveConsentParams
+} from '../src/params.js';
 import { expect } from 'chai';
 
 describe('Query parameters', () => {
@@ -128,7 +136,7 @@ describe('Query parameters', () => {
             param: 'max_sync_count',
             cases: {
                 'undefined': {
-                    to: 10
+                    to: DEFAULT_LIMIT
                 },
                 'garbage': {
                     from: 'garbage',
@@ -169,11 +177,11 @@ describe('Query parameters', () => {
             param: 'timeout',
             cases: {
                 default: {
-                    to: null
+                    to: DEFAULT_TIMEOUT
                 },
                 garbage: {
                     from: 'garbage',
-                    to: null,
+                    to: DEFAULT_TIMEOUT,
                 },
                 number: {
                     from: 123,

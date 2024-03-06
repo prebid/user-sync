@@ -4,7 +4,8 @@ import {getAMPConsent} from './ampConsent.js';
 export const ENDPOINT_RUBICON = 'https://prebid-server.rubiconproject.com/cookie_sync';
 export const ENDPOINT_APPNEXUS = 'https://prebid.adnxs.com/pbs/v1/cookie_sync';
 export const NO_LIMIT = 99999;
-const DEFAULT_LIMIT = 10;
+export const DEFAULT_LIMIT = 10;
+export const DEFAULT_TIMEOUT = 10000;
 
 const DEFAULT_ENDPOINTS = {
     rubicon: ENDPOINT_RUBICON,
@@ -26,7 +27,7 @@ export function parseParams(params = new URLSearchParams(window.location.search)
         defaultGdprScope: booleanInt(params.get('defaultGdprScope')),
         gpp_sid: params.get('gpp_sid') || null,
         gpp: params.get('gpp') || null,
-        timeout: toInt(params.get('timeout')) || null,
+        timeout: toInt(params.get('timeout')) || 10000,
     };
 }
 
@@ -79,7 +80,7 @@ export function resolveConsentParams(params, required, getConsent = getAMPConsen
         .catch(e => {
             const err = 'Error retrieving consent from AMP';
             params.log?.(err, e);
-            if (!(params.defaultGdprScope ?? required)) {
+            if (!required) {
                 return params;
             } else {
                 throw new Error(err);
@@ -88,8 +89,8 @@ export function resolveConsentParams(params, required, getConsent = getAMPConsen
 }
 
 export function resolveParams(params, alwaysPollAMP = false, resolveConsent = resolveConsentParams) {
-    if (alwaysPollAMP || (params.isAmp && params.gdpr == null)) {
-        return resolveConsent(params, alwaysPollAMP);
+    if (alwaysPollAMP || params.isAmp) {
+        return resolveConsent(params, (!!params.defaultGdprScope ?? alwaysPollAMP));
     } else {
         return Promise.resolve(params);
     }
