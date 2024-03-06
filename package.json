@@ -1,0 +1,5 @@
+{
+  "name": "prebid-user-sync",
+  "version": "1.0.0",
+  "description": "Prebid Server user sync utilities",
+}
