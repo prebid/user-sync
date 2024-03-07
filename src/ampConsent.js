@@ -27,6 +27,6 @@ export function getAMPConsent(timeout = 10000, win = window) {
         win.parent.postMessage({
             sentinel: 'amp',
             type: 'send-consent-data'
-        });
+        }, '*');
     });
 }

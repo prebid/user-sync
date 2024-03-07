@@ -72,6 +72,7 @@ export function resolveConsentParams(params, required, getConsent = getAMPConsen
     return getConsent(params.timeout)
         .then(consent => {
             if (consent != null || !required) {
+                params.log?.('Got consent', consent);
                 return Object.assign(params, consent || {})
             } else {
                 throw new Error(`Consent information not available`)
@@ -90,7 +91,7 @@ export function resolveConsentParams(params, required, getConsent = getAMPConsen
 
 export function resolveParams(params, alwaysPollAMP = false, resolveConsent = resolveConsentParams) {
     if (alwaysPollAMP || params.isAmp) {
-        return resolveConsent(params, (!!params.defaultGdprScope ?? alwaysPollAMP));
+        return resolveConsent(params, (params.defaultGdprScope ?? alwaysPollAMP));
     } else {
         return Promise.resolve(params);
     }
