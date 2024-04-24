@@ -1,11 +1,13 @@
 # Prebid User Sync utilities
 
-`npm run build` generates two HTML files, `dist/load_cookie.html` and `dist/load-cookie-with-consent.html`, which can be used to initiate "collaborative syncing" as documented [here](https://docs.prebid.org/prebid-server/developers/pbs-cookie-sync.html#manually-initiating-a-sync).
+`npm run build` generates two HTML files, `dist/load_cookie.html` and `dist/load-cookie-with-consent.html`, which can be used to initiate the bidder cookie sync with Prebid Server as documented [here](https://docs.prebid.org/prebid-server/developers/pbs-cookie-sync.html#manually-initiating-a-sync).
 
 The two versions are identical except in how they interface with AMP to retrieve consent data:
 
  - `load-cookie.html` will attempt to poll AMP for consent data only when `source` is set to `"amp"`, and does not require consent data to run syncs (`defaultGdprScope` defaults to `0`);
  - `load-cookie-with-consent` will always attempt to poll AMP, and does not run syncs unless it can retrieve consent data (`defaultGdprScope` defaults to `1`).
+
+Note: these files were formerly housed within the [Prebid Universal Creative repository](https://github.com/prebid/prebid-universal-creative). Now publishers and managed services will want to periodically= source these files from this repo to update their CDN.
  
 ## Query string parameters
 
