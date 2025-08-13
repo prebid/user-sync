@@ -26,3 +26,4 @@ Both pages accept the following query string parameters:
 | gpp              | optional | string | Global Privacy Platform string |                                             |
 | timeout          | optional     | integer | Timeout (in milliseconds) to wait for consent data from AMP. Defaults to 10000.                                                                          | 500                                                  |
 | args             | optional     | string  | Passed through to the /cookie_sync call query string. Used by some host companies.                                                                       |                                                      |
+| account          | optional     | string  | Passed through to the cookie_sync call query string. Used by PBS cookie sync to refine the selection of bidders to sync. | MyAccountID1234            |

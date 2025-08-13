@@ -28,6 +28,7 @@ export function parseParams(params = new URLSearchParams(window.location.search)
         gpp_sid: params.get('gpp_sid') || null,
         gpp: params.get('gpp') || null,
         timeout: toInt(params.get('timeout')) || 10000,
+        account: params.get('account') || null,
     };
 }
 
