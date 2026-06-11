@@ -1,6 +1,6 @@
 # Prebid User Sync utilities
 
-`npm run build` generates two HTML files, `dist/load_cookie.html` and `dist/load-cookie-with-consent.html`, which can be used to initiate the bidder cookie sync with Prebid Server as documented [here](https://docs.prebid.org/prebid-server/developers/pbs-cookie-sync.html#manually-initiating-a-sync).
+`npm run build` generates two HTML files, `dist/load-cookie.html` and `dist/load-cookie-with-consent.html`, which can be used to initiate the bidder cookie sync with Prebid Server as documented [here](https://docs.prebid.org/prebid-server/developers/pbs-cookie-sync.html#manually-initiating-a-sync). It also recreates the Prebid Universal Creative `uid.js` build artifact as `dist/uid.js` for SSP buyer user ID retrieval.
 
 The two versions are identical except in how they interface with AMP to retrieve consent data:
 
@@ -9,6 +9,20 @@ The two versions are identical except in how they interface with AMP to retrieve
 
 Note: these files were formerly housed within the [Prebid Universal Creative repository](https://github.com/prebid/prebid-universal-creative). Now publishers and managed services will want to periodically= source these files from this repo to update their CDN.
  
+## Buyer UID script
+
+`dist/uid.js` exposes `window.pbs.getBuyerUids(callback)`. The script follows the former Prebid Universal Creative flow: it fetches buyer IDs from the Prebid Server `/pbs/v1/getuids` endpoint with credentials, caches them in local storage under `ssp-buyeruids`, and refreshes the cache after 14 days.
+
+Example:
+
+```js
+window.pbs.getBuyerUids(function(error, uids) {
+    if (!error) {
+        // use uids here
+    }
+});
+```
+
 ## Query string parameters
 
 Both pages accept the following query string parameters:
