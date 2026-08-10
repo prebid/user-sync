@@ -40,6 +40,7 @@ export function ajax(url, callback, data, options = {}) {
     try {
         const timeout = 3000;
         const method = options.method || (data ? 'POST' : 'GET');
+        let completed = false;
         const callbacks = typeof callback === 'object' ? callback : {
             success: function() {
                 console.log('xhr success');
@@ -53,19 +54,37 @@ export function ajax(url, callback, data, options = {}) {
             callbacks.success = callback;
         }
 
+        function succeed(responseText, request) {
+            if (!completed) {
+                completed = true;
+                callbacks.success(responseText, request);
+            }
+        }
+
+        function fail(error, request) {
+            if (!completed) {
+                completed = true;
+                callbacks.error(error, request);
+            }
+        }
+
         const request = new window.XMLHttpRequest();
         request.onreadystatechange = function() {
             if (request.readyState === 4) {
                 const status = request.status;
                 if ((status >= 200 && status < 300) || status === 304) {
-                    callbacks.success(request.responseText, request);
+                    succeed(request.responseText, request);
                 } else {
-                    callbacks.error(request.statusText, request);
+                    fail(request.statusText, request);
                 }
             }
         };
         request.ontimeout = function() {
             console.log('xhr timeout after ', request.timeout, 'ms');
+            fail('timeout', request);
+        };
+        request.onerror = function() {
+            fail(request.statusText || 'network error', request);
         };
 
         request.open(method, url);

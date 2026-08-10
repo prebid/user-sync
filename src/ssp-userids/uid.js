@@ -55,6 +55,10 @@ export function loadData(callback) {
         }
     }
 
+    function handleError(error) {
+        callback(error, null);
+    }
+
     let uidData;
 
     try {
@@ -65,7 +69,10 @@ export function loadData(callback) {
     }
 
     if (hasInvalidData(uidData)) {
-        commons.ajax(ENDPOINT, saveData, null, {
+        commons.ajax(ENDPOINT, {
+            success: saveData,
+            error: handleError
+        }, null, {
             withCredentials: true
         });
     }
